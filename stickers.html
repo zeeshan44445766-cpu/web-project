@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sticker Shop 🎉</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(45deg, #ff9a9e, #fecfef, #fecfef, #ff9a9e);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .stickers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .sticker-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sticker-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .sticker-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .sticker-card:hover::before {
+            opacity: 1;
+            animation: rotate 1s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .sticker-emoji {
+            font-size: 4em;
+            margin-bottom: 15px;
+            display: block;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .sticker-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .sticker-price {
+            font-size: 1.5em;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .add-to-cart {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(238, 90, 36, 0.4);
+        }
+
+        .add-to-cart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(238, 90, 36, 0.6);
+        }
+
+        .cart {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            min-width: 300px;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .cart.show {
+            transform: translateX(0);
+        }
+
+        .cart-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 1.5em;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .cart-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .total {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #667eea;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background: linear-gradient(45deg, #56ab2f, #a8e6cf);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(86, 171, 47, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2em; }
+            .stickers-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+            .cart { min-width: 280px; right: 20px; bottom: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🛒 Sticker Shop 🎉</h1>
+        <p>Collect the cutest stickers ever! ✨</p>
+    </div>
+
+    <div class="container">
+        <div class="stickers-grid" id="stickersGrid">
+            <!-- Stickers will be generated by JavaScript -->
+        </div>
+    </div>
+
+    <button class="cart-toggle" id="cartToggle">🛒<span id="cartCount">0</span></button>
+
+    <div class="cart" id="cart">
+        <div class="cart-header">
+            <h3>🛒 Your Cart</h3>
+            <span id="cartClose">✕</span>
+        </div>
+        <div id="cartItems"></div>
+        <div class="total">
+            Total: $<span id="cartTotal">0</span>
+        </div>
+        <button class="checkout-btn" onclick="checkout()">Checkout 🎉</button>
+    </div>
+
+    <script>
+        const stickers = [
+            { name: 'Happy Face', emoji: '😊', price: 1.99 },
+            { name: 'Rocket', emoji: '🚀', price: 2.49 },
+            { name: 'Heart Eyes', emoji: '😍', price: 1.79 },
+            { name: 'Dancing', emoji: '💃', price: 2.99 },
+            { name: 'Pizza', emoji: '🍕', price: 1.49 },
+            { name: 'Star', emoji: '⭐', price: 0.99 },
+            { name: 'Rainbow', emoji: '🌈', price: 2.29 },
+            { name: 'Cat', emoji: '🐱', price: 1.89 },
+            { name: 'Dog', emoji: '🐶', price: 1.89 },
+            { name: 'Ice Cream', emoji: '🍦', price: 1.29 },
+            { name: 'Party', emoji: '🎉', price: 2.79 },
+            { name: 'Thumbs Up', emoji: '👍', price: 0.79 },
+            { name: 'ma', emoji: 'm', price: 0.03 },
+             { name: 'apple', emoji: 'A', price: 0.7 }
+        ];
+
+        let cart = [];
+
+        function renderStickers() {
+            const grid = document.getElementById('stickersGrid');
+            grid.innerHTML = stickers.map(sticker => `
+                <div class="sticker-card" onclick="addToCart('${sticker.name}', '${sticker.emoji}', ${sticker.price})">
+                    <span class="sticker-emoji">${sticker.emoji}</span>
+                    <div class="sticker-name">${sticker.name}</div>
+                    <div class="sticker-price">$${sticker.price}</div>
+                    <button class="add-to-cart">Add to Cart 🛒</button>
+                </div>
+            `).join('');
+        }
+
+        function addToCart(name, emoji, price) {
+            const existingItem = cart.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ name, emoji, price, quantity: 1 });
+            }
+            updateCartDisplay();
+            showNotification(`${emoji} ${name} added to cart!`);
+        }
+
+        function updateCartDisplay() {
+            const cartCount = document.getElementById('cartCount');
+            const cartItems = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            cartCount.textContent = totalItems;
+            cartItems.innerHTML = cart.map(item => `
+                <div class="cart-item">
+                    <span>${item.emoji} ${item.name}</span>
+                    <span>$${ (item.price * item.quantity).toFixed(2) } (x${item.quantity})</span>
+                </div>
+            `).join('');
+
+            cartTotal.textContent = totalPrice.toFixed(2);
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed; top: 20px; right: 20px; background: #4ecdc4;
+                color: white; padding: 15px 20px; border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 10000;
+                font-weight: bold; animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        document.getElementById('cartToggle').addEventListener('click', () => {
+            document.getElementById('cart').classList.toggle('show');
+        });
+
+        document.getElementById('cartClose').addEventListener('click', () => {
+            document.getElementById('cart').classList.remove('show');
+        });
+
+        function checkout() {
+            if (cart.length === 0) {
+                alert('Your cart is empty! 😅');
+                return;
+            }
+            alert(`Thank you for your purchase! Total: $${cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2)} 🎉`);
+            cart = [];
+            updateCartDisplay();
+            document.getElementById('cart').classList.remove('show');
+        }
+
+        // Add slide-in animation for notifications
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize
+        renderStickers();
+    </script>
+</body>
+</html>
